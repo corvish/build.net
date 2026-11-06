@@ -1,5 +1,5 @@
 # ===================================================
-# Shared baseline, owned by the build.net repository (https://github.com/corvish-hq/build.net).
+# Shared baseline, owned by the build.net repository (https://github.com/corvish/build.net).
 # Consumer repos receive a copy at their root on every build — never edit the copy, change build.net instead.
 # Repository-specific additions go into a nested .editorconfig (e.g. src/.editorconfig) WITHOUT root = true;
 # EditorConfig merges it with this file, and the nearer file wins on conflicts.

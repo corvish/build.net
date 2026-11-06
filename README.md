@@ -18,7 +18,7 @@ Shared build infrastructure for Corvish .NET projects, consumed as a Git submodu
 1. Add the submodule at the repository root:
 
    ```powershell
-   git submodule add https://github.com/corvish-hq/build.net build.net
+   git submodule add https://github.com/corvish/build.net build.net
    ```
 
 2. Import the defaults **unguarded** at the top of the consumer's `Directory.Build.props`, right after `RepoRoot` is

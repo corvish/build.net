@@ -4,7 +4,7 @@ applyTo: "**/*Tests/**,**/*TestUtilities/**"
 
 # Testing Rules
 
-<!-- Shared baseline, owned by the build.net repository (https://github.com/corvish-hq/build.net). -->
+<!-- Shared baseline, owned by the build.net repository (https://github.com/corvish/build.net). -->
 <!-- Consumer repos receive a copy on every build — never edit the copy, change build.net instead. -->
 
 > [!NOTE]
