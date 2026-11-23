@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*Tests/**,**/*TestUtilities/**"
+applyTo: "**"
 ---
 
 # Testing Rules

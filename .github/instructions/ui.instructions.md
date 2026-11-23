@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*.razor,**/*.razor.cs,**/*.css,**/*.xaml,**/*.xaml.cs"
+applyTo: "**"
 ---
 
 # UI Rules
@@ -8,7 +8,7 @@ applyTo: "**/*.razor,**/*.razor.cs,**/*.css,**/*.xaml,**/*.xaml.cs"
 <!-- Consumer repos receive a copy on every build — never edit the copy, change build.net instead. -->
 
 > [!NOTE]
-> UI rules for every UI technology (Blazor, MAUI/XAML, web front-ends).
+> Applies to repositories with a UI. UI rules for every UI technology (Blazor, MAUI/XAML, web front-ends).
 >
 > Placeholders (`<Product>`, `<UiPrefix>`) and general rules are explained in
 > [base.instructions.md](base.instructions.md); the concrete placeholder values come from the repo instructions,

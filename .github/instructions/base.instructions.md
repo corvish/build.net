@@ -35,9 +35,11 @@ applyTo: "**"
 
 ### Topic Files
 
-The rules are split by topic. Each file is loaded automatically for the files matching its `applyTo` front matter
-(the only place the patterns are defined); when planning work that will touch a topic before any matching file is
-open, **read the topic file first**.
+The rules are split by topic. Every topic file applies to **all** files (`applyTo: "**"`), so the complete rule set
+is loaded in every conversation — work often reaches a topic (tests, UI, data) only after it has started, and an
+agent must never depend on remembering to open a file. A topic file that does not concern a repository (no UI, no
+data layer) says so in its first note. If a tool did not load a topic file (for example a delegated sub-agent),
+**read it completely before changing files of its topic** — searching it for keywords is not enough.
 
 | File | Covers |
 |---|---|

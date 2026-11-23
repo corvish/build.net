@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*.cs"
+applyTo: "**"
 ---
 
 # C# Code Rules

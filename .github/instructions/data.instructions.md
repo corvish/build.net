@@ -1,5 +1,5 @@
 ---
-applyTo: "**/*Data*/**,**/Migrations/**"
+applyTo: "**"
 ---
 
 # Data Layer Rules
