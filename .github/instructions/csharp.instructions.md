@@ -126,7 +126,9 @@ contract of the parameter itself (same BCL convention as not documenting `OutOfM
   those using `IJSRuntime`; MAUI/WPF/WinForms view code) must use `ConfigureAwait(true)` (or omit it).
 - **Test projects** follow a two-tier rule ([xUnit1030](https://xunit.net/xunit.analyzers/rules/xUnit1030)):
   - `[Fact]`/`[Theory]` **test methods** — do **not** use `ConfigureAwait(false)` (xUnit controls scheduling via
-    `SynchronizationContext`).
+    `SynchronizationContext`). The same holds for the lifecycle methods xUnit calls on a test class
+    (`InitializeAsync()`, `DisposeAsync()`): xUnit invokes them directly, like a test method, even though the analyzer
+    does not check them. A teardown therefore only forwards to a helper (`=> _disposables.DisposeAsync()`).
   - **Test infrastructure** (harnesses, helper classes, test-operation abstractions) — **do** use
     `ConfigureAwait(false)`, same as production library code. `ConfigureAwait(false)` inside a helper does not propagate
     up the call stack; the test method's own `await` still resumes on the xUnit context.
@@ -179,7 +181,12 @@ Disposal follows a **three-tier model** to balance `ConfigureAwait(false)` consi
 |---|---|---|
 | **Library / production code** | `try/finally` + `DisposeAsync().ConfigureAwait(false)` | Ensures `ConfigureAwait(false)` on the disposal `await`. |
 | **Test infrastructure** (harnesses, helpers) | `try/finally` + `DisposeAsync().ConfigureAwait(false)` | Infrastructure is library-like code — same rule. |
-| **Test methods** (`[Fact]` / `[Theory]`) | `await using` allowed | `ConfigureAwait(false)` is forbidden in test methods (xUnit1030), so `try/finally` adds no value — it becomes pure boilerplate. `await using` is concise and safe here — except for the SUT (see testing rules). |
+| **Test methods** (`[Fact]` / `[Theory]`) | `await using` allowed | `ConfigureAwait(false)` is forbidden in test methods (xUnit1030), so `try/finally` adds no value — it becomes pure boilerplate. `await using` is concise and safe here — except for the SUT, which the test class teardown disposes (see testing rules). |
+
+**`Dispose()` / `DisposeAsync()` are idempotent.** A second call returns without effect and never throws — several
+owners (a DI scope, a test teardown) may dispose the same instance. Guard the entry with a disposed flag, thread-safe
+when the owners can run on different threads. Every type with its own disposal logic has a test that disposes it
+twice.
 
 ### Magic Strings
 

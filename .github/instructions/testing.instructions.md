@@ -417,7 +417,8 @@ Example:
   job timeout, so every intentional wait must be bounded in the test itself.
 - **Bound intentional waits with `Task.WaitAsync(TimeSpan)`** (BCL). On expiry it throws `TimeoutException`, failing
   the test at exactly that line, and it releases its timer when the task completes first. Add a short comment naming
-  what the test waits for. Do **not** hand-roll `Task.WhenAny(task, Task.Delay(...))` timeouts or a custom helper.
+  what the test waits for. Do **not** hand-roll `Task.WhenAny(task, Task.Delay(...))` timeouts or any other custom
+  timeout mechanism; a helper or teardown that bounds its own wait with `WaitAsync()` is fine.
 
 | Operation | Bound with `WaitAsync`? | Why |
 |-----------|-------------|-----|
@@ -426,8 +427,24 @@ Example:
 | Synchronous `.Wait()` on a primitive | ✅ Yes | Prefer the primitive's timeout overload (`Wait(TimeSpan)` + assert the result); `Task.Run(...)` + `WaitAsync` only if none exists — a hang then blocks a pool thread, so comment it |
 | Enqueue/set calls, property access, assertions | ❌ No | Not intentional waits |
 
-Do **not** use `await using` for the **SUT** in unit tests — if the implementation is buggy, `DisposeAsync()` may hang,
-causing the test to hang instead of failing with a clear error message.
+**Disposing the SUT.** Never declare the SUT with `await using`: a hanging `DisposeAsync()` would block the run
+instead of failing the test. Dispose it in the test class teardown instead:
+
+- The test class implements `IAsyncDisposable`; xUnit calls its `DisposeAsync()` after every test, passed or failed,
+  and reports a teardown failure together with a failure of the test itself.
+- The SUT factory registers every instance it creates with the test class; a test that builds the SUT without the
+  factory registers it explicitly. The teardown disposes the registered instances in reverse creation order, each
+  bounded with `WaitAsync(TimeSpan)`, and gives every instance its attempt even when an earlier one fails.
+- Do **not** dispose the SUT at the end of the test body or in a `try/finally` there: the trailing line is skipped
+  when an assertion fails, and a timeout thrown from `finally` replaces the assertion failure.
+- A test whose scenario is the disposal itself calls `DisposeAsync()` explicitly, bounded the same way; the second
+  disposal in the teardown is a no-op (see [Disposal](csharp.instructions.md#disposal)).
+- The same applies to objects the SUT hands out and to collaborators a test creates, when their `DisposeAsync()` is
+  own production code. Framework objects and test doubles may keep `await using`.
+- The teardown only cleans up what a test disposed anyway. Do not register objects just because they are disposable
+  when the tests never disposed them and nothing leaks.
+- A test class whose base class owns `DisposeAsync()` (bUnit's `BunitContext`) uses the base class's documented
+  extension point instead (`DisposeAsyncCore()`): dispose the registered instances first, then call the base.
 
 #### Refactoring Tests
 
