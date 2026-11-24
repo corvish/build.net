@@ -182,6 +182,25 @@ for concrete reasons (time pressure, scope, risk). Never take this path on your 
   workarounds, defensive guards, intentional no-ops), add a comment explaining *why* — not *what*. If someone might
   later ask "why was this done this way?", a comment is mandatory.
 
+### Editing Existing Text
+
+Prose is torn easily by partial edits: a replacement that starts or ends in the middle of a sentence leaves a
+fragment behind that still compiles and looks unremarkable in a diff. This applies to comments, XMLDoc, Markdown and
+user-facing text alike.
+
+- **Replace whole units, never fragments.** An edit to prose starts and ends on a unit boundary: a whole sentence, a
+  whole comment block, a whole XMLDoc element (`<summary>` … `</summary>`), a whole Markdown paragraph, list item or
+  table row. Rewrite the unit completely instead of patching a part of a line.
+- **An insertion leaves its neighbors untouched.** When adding a member, a test or a section next to existing text,
+  anchor the edit outside the neighbor's documentation (e.g. on the closing brace of the preceding member). Never
+  include the first lines of the neighbor's comment in the replaced span — text that is retyped instead of kept gets
+  shortened.
+- **Carried-over text is copied verbatim**, never retyped from memory. When code moves, its comments and XMLDoc move
+  unchanged; a wording change is a separate edit.
+- **Rewrapping and rewording are separate edits.** Do not change line breaks and content in the same replacement.
+- **Read the result, not only the diff.** After editing prose, read the complete unit once more as it now stands. A
+  diff shows only the changed lines, and a sentence that lost its end looks complete there.
+
 ### Core Principles
 
 | Principle | Meaning |
